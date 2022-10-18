@@ -8,15 +8,21 @@ public class PlayerMovement : MonoBehaviour
     CharacterController controller;
     float velocityY;
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
     }
-
-    void Update()
+    private void Update()
     {
         Movement();
         GroundSensor();
+    }
+    private void OnControllerColliderHit(ControllerColliderHit other)
+    {
+        if(other.collider.CompareTag("Pickup"))
+        {
+            other.gameObject.GetComponent<Pickup>().Pick();
+        }
     }
 
     void Movement()
@@ -24,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
         float inputX = Input.GetAxis("Horizontal");
         float inputY = Input.GetAxis("Vertical");
 
-        Debug.Log(new Vector2(inputX, inputY));
+        //Debug.Log(new Vector2(inputX, inputY));
 
         Vector3 movement = inputX * transform.right + inputY * transform.forward;
         controller.Move(movement * speed * Time.deltaTime);
@@ -32,7 +38,29 @@ public class PlayerMovement : MonoBehaviour
     void GroundSensor()
     {
         RaycastHit hit;
-        bool didHit = Physics.Raycast(transform.position + Vector3.down, Vector3.down, out hit, 0.5f);
+        bool didHit = Physics.Raycast(transform.position + Vector3.down, Vector3.down, out hit, 0.5f, LayerMask.GetMask("Ground"));
+
+        if(didHit)
+        {
+            switch(hit.collider.tag)
+            {
+                case "FastFloor":
+                    speed = 20;
+                    break;
+
+                case "SlowFloor":
+                    speed = 4;
+                    break;
+
+                default:
+                    speed = 10;
+                    break;
+            }
+        }
+        else
+        {
+            //speed = 10;
+        }
 
         if(didHit)
         {
@@ -43,7 +71,6 @@ public class PlayerMovement : MonoBehaviour
             Gravity();
         }
     }
-
     void Gravity()
     {
         if (velocityY < 55)
