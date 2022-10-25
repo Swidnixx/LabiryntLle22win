@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] int time = 60;
     bool paused;
 
+    int crystals = 0;
+    int redKeys = 0;
+    int greenKeys = 0;
+    int goldKeys = 0;
+
     private void Awake()
     {
         if(Instance == null)
@@ -19,7 +24,6 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Multiple GMs in the Scene!!! Delete them.");
         }
     }
-
     private void Start()
     {
         InvokeRepeating(nameof(TimerTick),  3, 1);
@@ -39,7 +43,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    // Game Flow methods
     void Pause()
     {
         Time.timeScale = 0;
@@ -67,5 +71,37 @@ public class GameManager : MonoBehaviour
     {
         CancelInvoke(nameof(TimerTick));
         Debug.Log("Game Over!");
+    }
+
+    // Pickups helper methods
+    public void AddCrystal()
+    {
+        crystals++;
+    }
+    public void AddTime(int time)
+    {
+        this.time += time;
+    }
+    public void FreezeTime(uint time)
+    {
+        CancelInvoke();
+        InvokeRepeating(nameof(TimerTick), time, 1);
+    }
+    public void AddKey(KeyColor keyColor)
+    {
+        switch(keyColor)
+        {
+            case KeyColor.Red:
+                redKeys++;
+                break;
+
+            case KeyColor.Green:
+                greenKeys++;
+                break;
+
+            case KeyColor.Gold:
+                goldKeys++;
+                break;
+        }
     }
 }
