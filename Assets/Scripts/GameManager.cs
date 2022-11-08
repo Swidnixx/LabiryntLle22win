@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
             GameOver();
         }
 
-        Debug.Log("Time: " + time);
+        //Debug.Log("Time: " + time);
     }
     void GameOver()
     {
