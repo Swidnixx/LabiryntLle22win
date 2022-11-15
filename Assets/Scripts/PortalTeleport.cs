@@ -5,7 +5,7 @@ using UnityEngine;
 public class PortalTeleport : MonoBehaviour
 {
     Transform player;
-    public Transform receiver;
+    [HideInInspector]public Transform receiver;
 
     bool playerIsPassing;
 

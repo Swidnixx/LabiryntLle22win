@@ -8,12 +8,13 @@ public class Portal : MonoBehaviour
     public MeshRenderer myRenderPlane;
     Camera playerCamera;
     Camera myCamera;
-
+    [HideInInspector] public PortalTeleport myTeleport;
 
     private void Awake()
     {
         playerCamera = Camera.main;
         myCamera = GetComponentInChildren<Camera>();
+        myTeleport = GetComponentInChildren<PortalTeleport>();
     }
 
     private void Start()
@@ -21,6 +22,8 @@ public class Portal : MonoBehaviour
         RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 0);
         myCamera.targetTexture = rt;
         linkedPortal.myRenderPlane.material.SetTexture("_MainTex", rt);
+
+        myTeleport.receiver = linkedPortal.myTeleport.transform;
     }
 
     private void Update()
