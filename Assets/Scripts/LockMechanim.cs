@@ -10,6 +10,13 @@ public class LockMechanim : MonoBehaviour
     bool playerInRange;
     bool alreadyOpen;
 
+    Animator animator;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
@@ -37,13 +44,13 @@ public class LockMechanim : MonoBehaviour
                 if (GameManager.Instance.CheckTheKey(keyColor))
                 {
                     alreadyOpen = true;
-                    Open(); 
+                    animator.SetTrigger("open");
                 }
             } 
         }
     }
 
-    void Open()
+    public void Open()
     {
         foreach(var d in doorToOpen)
         {
