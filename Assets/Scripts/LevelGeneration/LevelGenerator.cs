@@ -7,10 +7,14 @@ public class LevelGenerator : MonoBehaviour
 {
     public Texture2D texture;
     public ColorMapping[] mappings;
+    public float blockSize = 5;
 
-    private void Start()
+    public void Clear()
     {
-        GenerateLevel();
+        for(int i=transform.childCount-1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
     }
 
     public void GenerateLevel()
@@ -27,12 +31,13 @@ public class LevelGenerator : MonoBehaviour
 
     private void SpawnFragment(int x, int y, Color pixel)
     {
-        Vector3 position = new Vector3(x, 0, y);
+        Vector3 position = new Vector3(x, 0, y) * blockSize;
         foreach( ColorMapping m in mappings )
         {
             if( m.color == pixel )
             {
-                Instantiate(m.prefab, position, Quaternion.identity, transform);
+                GameObject block = Instantiate(m.prefab, transform);
+                block.transform.localPosition = position;
             }
         }
     }
