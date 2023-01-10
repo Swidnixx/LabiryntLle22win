@@ -1,17 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
+using TMPro;
+
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
     [SerializeField] int time = 60;
     bool paused;
+    bool gameEnded;
 
     int crystals = 0;
     int redKeys = 0;
     int greenKeys = 0;
     int goldKeys = 0;
+
+    // UI references
+    public TextMeshProUGUI timeText;
+    public TextMeshProUGUI diamondsText;
+    public TextMeshProUGUI redKeysText;
+    public TextMeshProUGUI greenKeysText;
+    public TextMeshProUGUI goldKeysText;
+    public GameObject snowFlake;
+
+    public GameObject pausePanel;
+    public GameObject losePanel;
+    public GameObject winPanel;
 
     private void Awake()
     {
@@ -30,6 +47,11 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        if (gameEnded) return;
+
+        DisplayTime();
+        DisplayPickups();
+
         if(Input.GetButtonDown("Cancel"))
         {
             if(paused)
@@ -49,12 +71,14 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
         paused = true;
         Debug.Log("Game Paused");
+        pausePanel.SetActive(true);
     }
     void Resume()
     {
         Time.timeScale = 1;
         paused = false;
         Debug.Log("Game Resumed");
+        pausePanel.SetActive(false);
     }
     void TimerTick()
     {
@@ -64,13 +88,24 @@ public class GameManager : MonoBehaviour
             time = 0;
             GameOver();
         }
-
+        snowFlake.SetActive(false);
         //Debug.Log("Time: " + time);
     }
     void GameOver()
     {
         CancelInvoke(nameof(TimerTick));
         Debug.Log("Game Over!");
+        losePanel.SetActive(true);
+        Time.timeScale = 0;
+        gameEnded = true;
+    }
+    public void Win()
+    {
+        CancelInvoke(nameof(TimerTick));
+        Debug.Log("Game Win!");
+        winPanel.SetActive(true);
+        Time.timeScale = 0;
+        gameEnded = true;
     }
 
     // Pickups helper methods
@@ -86,6 +121,7 @@ public class GameManager : MonoBehaviour
     {
         CancelInvoke();
         InvokeRepeating(nameof(TimerTick), time, 1);
+        snowFlake.SetActive(true);
     }
     public void AddKey(KeyColor keyColor)
     {
@@ -104,7 +140,6 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
     public bool CheckTheKey(KeyColor keyColor)
     {
         switch(keyColor)
@@ -135,5 +170,18 @@ public class GameManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    // Display Methods
+    void DisplayTime()
+    {
+        timeText.text = time.ToString();
+    }
+    void DisplayPickups()
+    {
+        diamondsText.text = crystals.ToString();
+        redKeysText.text = redKeys.ToString();
+        greenKeysText.text = greenKeys.ToString();
+        goldKeysText.text = goldKeys.ToString();
     }
 }
